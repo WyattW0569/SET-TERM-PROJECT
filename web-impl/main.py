@@ -7,7 +7,8 @@ import gc
 
 
 onboard = Pin("LED", Pin.OUT, value=0)
-state = "OFF"
+test = "start"
+test2 = 0
 
 ssid = 'SET'       #Set access point name 
 password = 'Grunklestan'      #Set your access point password
@@ -26,7 +27,7 @@ s.listen(5)
 
 def get_html(html_name,css_name):
    with open(html_name, 'r') as file:
-      html = file.read().format(Current_temp="cur temp",MIN="min",MAX="max",outdoor_temp="outdoor",light_mode="light mode")
+      html = file.read().format(Current_temp=test,MIN=test2,MAX="max",outdoor_temp="outdoor",light_mode="light mode")
       file.close()
    with open(css_name, 'r') as file1:
       css = file1.read()
@@ -34,7 +35,7 @@ def get_html(html_name,css_name):
    input_file = str(html)+"<style>" +str(css)+ "</style>"
    return input_file
 
-def webpage(state):
+def webpage():
     html = get_html('index.html','styles.css')
     return str(html)
 
@@ -48,13 +49,12 @@ while True:
         request = request.split()[1]
     except IndexError:
         pass
-    if request == '/lighton?':
-        onboard.on()
-        state = 'ON'
+    if request == '/test?':
+        test='IT WORKED!'
+        test2+=1
     elif request == '/lightoff?':
         onboard.off()
-        state = 'OFF'
     gc.collect()
-    html = webpage(state)
+    html = webpage()
     conn.send(html)
     conn.close()
