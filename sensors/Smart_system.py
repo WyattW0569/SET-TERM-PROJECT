@@ -26,3 +26,11 @@ def setColor( colorcode ):
     rgbB.duty_u16(bVal)
 
     
+
+while True:
+    white = [255,255,255]
+    teal = [66,254,224]
+    orange = [255,255,0]
+
+    setColor(orange)
+    
