@@ -5,7 +5,6 @@ import machine
 from machine import Pin
 import gc
 
-#test commit
 
 onboard = Pin("LED", Pin.OUT, value=0)
 state = "OFF"
