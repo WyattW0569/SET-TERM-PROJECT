@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SET</title>
+</head>
+<body>
+    <div class="row">
+        <div class="col"><h1 class="title">SET</h1></div>
+        <div class="col bord">
+            <div class="row">
+                <div class="col subtitle">Current temp</div>
+            </div>
+            <div class="row">
+                <div class="col heading">{Current_temp}</div>
+            </div>
+            <div class="row bord">
+                <div class="col">
+                    <div class="row">
+                        <div class="col heading">MIN:{MIN}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <button class="btn btn-up">RAISE</button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-down">LOWER</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="row">
+                        <div class="col heading">MAX:{MAX}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <button class="btn btn-up">RAISE</button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-down">LOWER</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-2 bord">
+            <div class="row">
+                <div class="col subheading">Outdoor Temp</div>
+            </div>
+            <div class="row">
+                <div class="col itallics">{outdoor_temp}</div>
+            </div>
+        </div>
+        <div class="col-2 bord">
+            <div class="row">
+                <div class="col subheading">Current Light Mode</div>
+            </div>
+            <div class="row">
+                <div class="col itallics">{light_mode}</div>
+            </div>
+        </div>
+        <div class="col-4 bord">
+            <div class="row">
+                <div class="col subheading">Toggle Light Mode</div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="radio">
+                        <input class="radio__input" type="radio" value="option1" name="myRadio" id="myRadio1">
+                        <label class="radio__label" for="myRadio1">AUTO</label>
+                        <input class="radio__input" type="radio" value="option2" name="myRadio" id="myRadio2">
+                        <label class="radio__label" for="myRadio2">ON</label>
+                        <input class="radio__input" type="radio" value="option3" name="myRadio" id="myRadio3">
+                        <label class="radio__label" for="myRadio3">OFF</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

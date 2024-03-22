@@ -1,0 +1,106 @@
+.row{
+    display: flex;
+    padding: 1em;;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+[class*='col']{
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+@media screen and (min-width: 600px) {
+    .col{flex: 1;}
+    .col-1{width: 12.5%}
+    .col-2{width: 25%}
+    .col-3{width: 37.5%}
+    .col-4{width: 50%}
+    .col-5{width: 62.5%}
+    .col-6{width: 75%}
+    .col-7{width: 87.5%}
+    .col-8{width: 100%}
+    
+}
+
+.bord{
+    border: 2px solid black;
+}
+
+.title{
+    font-size: 175px;
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+.radio{
+    display: inline-flex;
+    overflow: hidden;
+    border-radius: 15px;
+    box-shadow: 0 0 5px rgb(0,0,0,0.25);
+}
+.radio__input{
+    display: none;
+}
+.radio__label{
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 20px;
+    padding: 1.25rem 2rem;
+    color: white;
+    background-color: #f57d14;
+    transition: 0.3s;
+}
+.radio__label:not(:last-of-type){
+    border-right: 3px solid #cc6102;
+}
+.radio__input:checked + .radio__label{
+    background-color: #ffaa5e;
+}
+
+.btn{
+    border-radius: 40px;
+    border: 0;
+    font-size: 20px;
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-weight: 600;
+    padding: 10px 40px;
+    color: white;
+
+}
+.btn-up{
+    background: green;
+}
+.btn-up:hover{
+    background: darkgreen;
+}
+.btn-down{
+    background: red;
+}
+.btn-down:hover{
+    background: darkred;
+}
+
+.subtitle{
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 100px;
+    font-weight: 200;
+}
+
+.heading{
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 50px;
+    font-weight: 150;
+}
+
+.subheading{
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 25px;
+    font-weight: 100;
+}
+
+.itallics{
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 20px;
+    font-weight: 50;
+    font-style: italic;
+}
