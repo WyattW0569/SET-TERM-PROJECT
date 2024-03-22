@@ -1,4 +1,5 @@
 from machine import Pin, PWM
+from utime import sleep
 
 # sets pins 10-12 as PWM pins for the RGB LED
 rgbG = PWM (Pin(10))
@@ -31,6 +32,10 @@ while True:
     white = [255,255,255]
     teal = [66,254,224]
     orange = [255,255,0]
+    magenta = [255,0,255]
+    
 
     setColor(orange)
-    
+    sleep (1)
+    setColor(magenta)    
+    sleep(1)
