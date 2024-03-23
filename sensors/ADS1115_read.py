@@ -54,6 +54,7 @@ redLED_pin = Pin(16, Pin.OUT)
 
 IRSensorValue = readValueFrom(0)
 lastSensorValue = IRSensorValue
+count = 0
 
 while True:
     lastSensorValue = IRSensorValue
@@ -66,9 +67,12 @@ while True:
 
     if difference > 25: #tune this and sleep value to adust sensitivity of motion sensor
         redLED_pin.on()
-    else:
+        count = 0
+    elif count>10:
         redLED_pin.off()
+        count = 0
 
+    count +=1
     sleep (0.1)
 
 
