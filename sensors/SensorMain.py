@@ -1,6 +1,6 @@
 from utime import sleep
 from machine import I2C, Pin, ADC, PWM
-
+from math import log
 
 dev = I2C (1, scl=Pin(15), sda=Pin(14)) # configure pico to recoignise pins 14 and 15 as scl and sda pins for an external device (ADC Expansion board)
 
