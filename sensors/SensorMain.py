@@ -115,7 +115,7 @@ def readIntTemperature():
     return Temperature
 
 # this function reads the temperature read by the exterior thermistor
-def readIntTemperature():
+def readExtTemperature():
     conversion_factor = 3.3 / 65535
     reading = extTempSensor.read_u16()
     Resistance = (3.3*10000)/(reading*conversion_factor)-10000 #calculates the resistance of the thermistor
