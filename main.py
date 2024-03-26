@@ -126,7 +126,7 @@ def setRGBColor( colorcode ):
 def IRmotion(lastIRValue):
     IRValue = readValueFrom(0) #reads new IR Sensor value
     difference = abs(IRValue-lastIRValue) #compares current and last sensor value
-    print (IRValue, lastIRValue, difference)
+    #print (IRValue, lastIRValue, difference)
     if difference>25: #tune the > value to adust sensitivity
         return True, IRValue # if > threashold: motion detected. return True for motion and current IR value to be sent next function call
     else:
@@ -202,9 +202,11 @@ def sensor_main(motion,lightCount):
         lightCount +=1 
 
         sleep (0.1)
-_thread.start_new_thread(sensor_main,(motion,0))
+#_thread.start_new_thread(sensor_main,(motion,0))
 #MAIN LOOP
 while True:
+    #Web Var Stuff
+    curTemp = readIntTemperature()
 
     #Webpage stuff
     conn, addr = s.accept()
@@ -225,6 +227,8 @@ while True:
         maxTemp-=1
     elif request == '/lightoff?':
         onboard.off()
+    sleep(2)
+    request='/?'
     html = webpage()
     conn.send(html)
     conn.close()
