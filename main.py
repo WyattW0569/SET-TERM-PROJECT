@@ -3,7 +3,7 @@ import socket
 from time import sleep
 import machine
 from machine import I2C, Pin, ADC, PWM
-from math import log
+from math import log, trunc
 import _thread
 import gc
 
@@ -34,6 +34,7 @@ rgbOn = [255,255,255]
 rgbWarm = [255,255,150]
 rgbCool = [150,255,255]
 rgbOff = [0,0,0]
+rgbCurrent = rgbOn
 
 #WEB IMPL
 onboard = Pin("LED", Pin.OUT, value=0)
@@ -144,6 +145,9 @@ def readIntTemperature():
     c=9.9 * pow(10, -8) #varibles for the stienhart-Hart equation
     Temperature = 1/(a + (b * log(Resistance) ) + c * pow(( log(Resistance)), 3) ) #the stienhart-Hart equation. calculates temperature read from resistance value
     Temperature = Temperature - 241.83 #adustment from absolute temperature to celcius- tuned slightly based on individual thermistor
+    Temperature = Temperature*10
+    Temperature = trunc(Temperature)
+    Temperature = Temperature/10
     return Temperature
 
 # this function reads the temperature read by the exterior thermistor
@@ -156,6 +160,9 @@ def readExtTemperature():
     c=9.9 * pow(10, -8) #varibles for the stienhart-Hart equation
     Temperature = 1/(a + (b * log(Resistance) ) + c * pow(( log(Resistance)), 3) ) #the stienhart-Hart equation. calculates temperature read from resistance value
     Temperature = Temperature - 241.83 #adustment from absolute temperature to celcius- tuned slightly based on individual thermistor
+    Temperature = Temperature*10
+    Temperature = trunc(Temperature)
+    Temperature = Temperature/10
     return Temperature
 
 #Lux functions
@@ -191,18 +198,30 @@ motion = [False,readValueFrom(0)]
 def sensor_main(motion,lightCount):
     while True:
         motion = IRmotion(motion[1]) # call IR motion function with the last value of sensor readout
+
+        # sets current color based on temperature values
+        if(readExtTemperature()>readIntTemperature()):
+            rgbCurrent=rgbCool
+        elif(readExtTemperature()<readIntTemperature()):
+            rgbCurrent=rgbWarm
+        else:
+            rgbCurrent=rgbOn
+
         
         # If elif turns on or off lights based on motion and delay
         if motion[0]:
-            setRGBColor(rgbCool) # calls setRGB function to turn on LED
+            setRGBColor(rgbCurrent) # calls setRGB function to turn on LED
             lightCount = 0
         elif lightCount>10:
-            setRGBColor(rgbOff) # calls setRGB function to turn off LED
+            setRGBColor(rgbCurrent) # calls setRGB function to turn off LED
             lightCount = 0
         lightCount +=1 
 
+        print(readIntTemperature())
         sleep (0.1)
-#_thread.start_new_thread(sensor_main,(motion,0))
+_thread.start_new_thread(sensor_main,(motion,0))
+
+
 #MAIN LOOP
 while True:
     #Web Var Stuff
