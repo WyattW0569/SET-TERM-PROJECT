@@ -21,8 +21,13 @@ rgbG.freq(1000)
 rgbR.freq(1000)
 
 # sets pins for temp sensors
-intTempSensor = ADC(27)
-extTempSensor = ADC(26)
+intTempSensor = ADC(26)
+extTempSensor = ADC(27)
+
+# sets pins for HVAC actuators
+heatON = Pin(17, Pin.OUT)
+coolON = Pin(16, Pin.OUT)
+
 
 #defines ports of light sensors
 intLightSensor = 1
@@ -38,8 +43,8 @@ rgbCurrent = rgbOn
 
 #WEB IMPL
 onboard = Pin("LED", Pin.OUT, value=0)
-minTemp = 18
-maxTemp = 25
+minTemp = 24
+maxTemp = 28
 curTemp = 0
 outTemp = 0
 curLightMode = "default"
@@ -207,17 +212,26 @@ def sensor_main(motion,lightCount):
         else:
             rgbCurrent=rgbOn
 
-        
         # If elif turns on or off lights based on motion and delay
         if motion[0]:
             setRGBColor(rgbCurrent) # calls setRGB function to turn on LED
             lightCount = 0
         elif lightCount>10:
-            setRGBColor(rgbCurrent) # calls setRGB function to turn off LED
+            setRGBColor(rgbOff) # calls setRGB function to turn off LED
             lightCount = 0
         lightCount +=1 
 
-        print(readIntTemperature())
+        if (readIntTemperature() < minTemp):
+            heatON.on()
+        else:
+            heatON.off()    
+
+        if (readIntTemperature() > maxTemp):
+            coolON.on()
+        else:
+            coolON.off()
+
+
         sleep (0.1)
 _thread.start_new_thread(sensor_main,(motion,0))
 
