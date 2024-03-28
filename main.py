@@ -5,6 +5,7 @@ import machine
 from machine import I2C, Pin, ADC, PWM
 from math import log, trunc
 import _thread
+import json
 import gc
 
 
@@ -221,6 +222,12 @@ def webpage():
     html = get_html('index.html','styles.css','scripts.js')
     return str(html)
 
+def get_status():
+    status = {
+        "curTemp":curTemp,
+    }
+    return json.dumps(status)
+
 
 motion = [False,readValueFrom(0)] #motion initial declaration
 
@@ -282,6 +289,9 @@ while True:
     print('Got a connection from %s' % str(addr))
     request = conn.recv(1024)
     request = str(request)
+    if request.find("/status")==6:
+        response = get_status()
+        conn.send(response)
     try:
         request = request.split()[1]
     except IndexError:
@@ -296,6 +306,6 @@ while True:
         maxTemp-=1
     elif request == '/lightoff?':
         onboard.off()
-    html = webpage()
-    conn.send(html)
-    conn.close()
+    response = webpage()
+    conn.send(response)
+conn.close()
