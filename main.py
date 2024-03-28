@@ -204,18 +204,21 @@ def lightOn():
         return True
 
 #Web functions
-def get_html(html_name,css_name):
+def get_html(html_name,css_name,js_name):
    with open(html_name, 'r') as file:
       html = file.read().format(Current_temp=curTemp,MIN=minTemp,MAX=maxTemp,outdoor_temp=outTemp,light_mode=curLightMode)
       file.close()
    with open(css_name, 'r') as file1:
       css = file1.read()
       file1.close()
-   input_file = str(html)+"<style>" +str(css)+ "</style>"
+   with open(js_name, 'r') as file2:
+      js = file2.read()
+      file2.close()
+   input_file = str(html)+"<style>" +str(css)+ "</style>"+"<script>" +str(js)+ "</script>"
    return input_file
 
 def webpage():
-    html = get_html('index.html','styles.css')
+    html = get_html('index.html','styles.css','scripts.js')
     return str(html)
 
 #Sensor main loop
@@ -284,8 +287,6 @@ while True:
         maxTemp-=1
     elif request == '/lightoff?':
         onboard.off()
-    sleep(2)
-    request='/?'
     html = webpage()
     conn.send(html)
     conn.close()
