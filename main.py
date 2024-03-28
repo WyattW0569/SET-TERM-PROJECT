@@ -181,7 +181,8 @@ def readLight(port):
     maxvoltage= 3.3
     voltage=readValueFrom(port)
     voltage= voltage/maxread*maxvoltage
-    if voltage>2.55:
+    print (voltage)
+    if voltage>2.4:
         return True
     else:
         return False
