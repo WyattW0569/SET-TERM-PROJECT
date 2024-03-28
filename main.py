@@ -52,7 +52,7 @@ minTemp = 24
 maxTemp = 28
 curTemp = 0
 outTemp = 0
-curLightMode = "default"
+curLightMode = "auto"
 
 
 
@@ -188,7 +188,7 @@ def readLight(port):
         return False
     
             
-            # decide to turn lights on based on current values
+# decide to turn lights on based on current values
 def lightOn():        
     intLight = readLight(intLightSensor)
     extLight = readLight(extLightSensor)
@@ -221,33 +221,41 @@ def webpage():
     html = get_html('index.html','styles.css','scripts.js')
     return str(html)
 
-#Sensor main loop
-motion = [False,readValueFrom(0)]
-def sensor_main(motion,lightCount):
+
+motion = [False,readValueFrom(0)] #motion initial declaration
+
+def sensor_main(motion,lightCount): #sensor main function 
     while True:
         motion = IRmotion(motion[1]) # call IR motion function with the last value of sensor readout
 
-        # sets current color based on temperature values
-        if(readExtTemperature()>(maxTemp+minTemp)/2):
-            rgbCurrent=rgbCool
-        elif(readExtTemperature()<(maxTemp+minTemp)/2):
-            rgbCurrent=rgbWarm
+# smart Lighting control
+        if curLightMode == 'auto':
+            # sets current color based on temperature values
+            if(readExtTemperature()>(maxTemp+minTemp)/2):
+                rgbCurrent=rgbCool
+            elif(readExtTemperature()<(maxTemp+minTemp)/2):
+                rgbCurrent=rgbWarm
+            else:
+                rgbCurrent=rgbOn
+
+            turnLightOn=lightOn() #determines if light should be allowed to turn on
+            print(turnLightOn)
+            # If elif turns on or off lights based on motion and delay
+            if motion[0] and turnLightOn:
+                setRGBColor(rgbCurrent) # calls setRGB function to turn on LED
+                lightState = True
+                lightCount = 0
+            elif lightCount>20:
+                setRGBColor(rgbOff) # calls setRGB function to turn off LED\
+                lightState = False
+                lightCount = 0
+            lightCount +=1 
+        elif curLightMode == 'on':
+            setRGBColor(rgbOn)
         else:
-            rgbCurrent=rgbOn
+            setRGBColor(rgbOff)
 
-        turnLightOn=lightOn()
-        print(turnLightOn)
-        # If elif turns on or off lights based on motion and delay
-        if motion[0] and turnLightOn:
-            setRGBColor(rgbCurrent) # calls setRGB function to turn on LED
-            lightState = True
-            lightCount = 0
-        elif lightCount>20:
-            setRGBColor(rgbOff) # calls setRGB function to turn off LED\
-            lightState = False
-            lightCount = 0
-        lightCount +=1 
-
+# smart heating control
         if (readIntTemperature() < minTemp):
             heatON.on()
         else:
@@ -260,6 +268,7 @@ def sensor_main(motion,lightCount):
 
 
         sleep (0.1)
+
 _thread.start_new_thread(sensor_main,(motion,0))
 
 
