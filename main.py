@@ -224,9 +224,9 @@ def sensor_main(motion,lightCount):
         motion = IRmotion(motion[1]) # call IR motion function with the last value of sensor readout
 
         # sets current color based on temperature values
-        if(readIntTemperature()>(maxTemp+minTemp)/2):
+        if(readExtTemperature()>(maxTemp+minTemp)/2):
             rgbCurrent=rgbCool
-        elif(readIntTemperature()<(maxTemp+minTemp)/2):
+        elif(readExtTemperature()<(maxTemp+minTemp)/2):
             rgbCurrent=rgbWarm
         else:
             rgbCurrent=rgbOn
