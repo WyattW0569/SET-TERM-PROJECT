@@ -7,6 +7,7 @@ from math import log, trunc
 import _thread
 import gc
 
+
 #VARIABLES
 dev = I2C (1, scl=Pin(15), sda=Pin(14)) # configure pico to recoignise pins 14 and 15 as scl and sda pins for an external device (ADC Expansion board)
 
@@ -32,12 +33,16 @@ coolON = Pin(16, Pin.OUT)
 #defines ports of light sensors
 intLightSensor = 1
 extLightSensor = 2
+turnLightOn = False
+global lightState 
+lightState = False
+
 
 
 # RGB values for setRGB function
 rgbOn = [255,255,255]
-rgbWarm = [255,255,150]
-rgbCool = [150,255,255]
+rgbWarm = [255,200,100]
+rgbCool = [100,200,255]
 rgbOff = [0,0,0]
 rgbCurrent = rgbOn
 
@@ -170,18 +175,32 @@ def readExtTemperature():
     Temperature = Temperature/10
     return Temperature
 
-#Lux functions
-# this is the function for calculating the LUX (light value) present based on the value read from the photoresistor when given a port on the ADS1115 ADC expansion board
-def read_Lux(PhotoPort):
-    max_read = 65535  #The maximum value of the ADC converter
-    data = readValueFrom(PhotoPort)  #Take the value read from the ADC 
+#function for calculating if a room is bright enough without the light on
+def readLight(port):
+    maxread=26000
+    maxvoltage= 3.3
+    voltage=readValueFrom(port)
+    voltage= voltage/maxread*maxvoltage
+    if voltage>2.55:
+        return True
+    else:
+        return False
+    
+            
+            # decide to turn lights on based on current values
+def lightOn():        
+    intLight = readLight(intLightSensor)
+    extLight = readLight(extLightSensor)
 
-    resistor_voltage = data / (max_read * 3.3)  #Converting the data read into a voltage voltage of the resistor
-    photo_voltage = 3.3 - resistor_voltage  #Calculating the voltage of the photo_resistor
-    photo_resistance = photo_voltage/resistor_voltage*3.3  #Calculating the resistance of the photo resistor
-
-    Lux = pow(photo_resistance,-1.4059)(12518931)  #Calculate the Lux (Unit of light) that the photoresistor is sensing
-    return Lux
+    if extLight and not intLight:
+        print('open blinds you idiot')
+        return False
+    elif intLight and extLight and not lightState:
+        print('no')
+        return False
+    else:
+        print('yes')
+        return True
 
 #Web functions
 def get_html(html_name,css_name):
@@ -205,27 +224,31 @@ def sensor_main(motion,lightCount):
         motion = IRmotion(motion[1]) # call IR motion function with the last value of sensor readout
 
         # sets current color based on temperature values
-        if(readExtTemperature()>readIntTemperature()):
+        if(readIntTemperature()>(maxTemp+minTemp)/2):
             rgbCurrent=rgbCool
-        elif(readExtTemperature()<readIntTemperature()):
+        elif(readIntTemperature()<(maxTemp+minTemp)/2):
             rgbCurrent=rgbWarm
         else:
             rgbCurrent=rgbOn
 
+        turnLightOn=lightOn()
+        print(turnLightOn)
         # If elif turns on or off lights based on motion and delay
-        if motion[0]:
+        if motion[0] and turnLightOn:
             setRGBColor(rgbCurrent) # calls setRGB function to turn on LED
+            lightState = True
             lightCount = 0
-        elif lightCount>10:
-            setRGBColor(rgbOff) # calls setRGB function to turn off LED
+        elif lightCount>20:
+            setRGBColor(rgbOff) # calls setRGB function to turn off LED\
+            lightState = False
             lightCount = 0
         lightCount +=1 
 
         if (readIntTemperature() < minTemp):
             heatON.on()
         else:
-            heatON.off()    
-
+            heatON.off()
+                
         if (readIntTemperature() > maxTemp):
             coolON.on()
         else:

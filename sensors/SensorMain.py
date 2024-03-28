@@ -127,34 +127,26 @@ def readExtTemperature():
     return Temperature
 
 
-# this is the function for calculating the LUX (light value) present based on the value read from the photoresistor when given a port on the ADS1115 ADC expansion board
-def read_Lux(PhotoPort):
-    max_read = 65535  #The maximum value of the ADC converter
-    data = readValueFrom(PhotoPort)  #Take the value read from the ADC 
-
-    resistor_voltage = data / (max_read * 3.3)  #Converting the data read into a voltage voltage of the resistor
-    photo_voltage = 3.3 - resistor_voltage  #Calculating the voltage of the photo_resistor
-    photo_resistance = photo_voltage/resistor_voltage*3.3  #Calculating the resistance of the photo resistor
-
-    Lux = pow(photo_resistance,-1.4059)(12518931)  #Calculate the Lux (Unit of light) that the photoresistor is sensing
-    return Lux
 
 
 
-# curerntly, only the IR sensor is set up to run. all functions work but the final implementation requires varibles from the UI.
-# the sensor code and the UI code are not put together yet.
+def readLight(port):
+    maxread=26000
+    maxvoltage= 3.3
+    voltage=readValueFrom(port)
+    voltage= voltage/maxread*maxvoltage
+    if voltage>2.55:
+        return True
+    else:
+        return False
+
 
 while True:
-   
-    motion = IRmotion(motion[1]) # call IR motion function with the last value of sensor readout
-    
-    # If elif turns on or off lights based on motion and delay
-    if motion[0]:
-        setRGBColor(rgbCool) # calls setRGB function to turn on LED
-        lightCount = 0
-    elif lightCount>10:
-        setRGBColor(rgbOff) # calls setRGB function to turn off LED
-        lightCount = 0
-    lightCount +=1 
-
-    sleep (0.1) 
+    lux = readLight(intLightSensor)
+    if lux:
+        print("bright")
+    else:
+        print("dark")
+    print ("temperature", readExtTemperature())
+    readLight(1)
+    sleep (0.5) 
