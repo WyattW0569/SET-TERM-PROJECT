@@ -205,6 +205,9 @@ def lightOn():
         return True
 
 #Web functions
+
+#Takes names of html file and css file, and reads it to a string
+#formats the HTML to places the variables where they are needed
 def get_html(html_name,css_name):
    with open(html_name, 'r') as file:
       html = file.read().format(Current_temp=curTemp,MIN=minTemp,MAX=maxTemp,outdoor_temp=outTemp,light_mode=curLightMode)
@@ -267,12 +270,13 @@ def sensor_main(motion,lightCount): #sensor main function
 
         sleep (0.5)
 
+#starts a new thread to run the sensor code and web code at the same time
 _thread.start_new_thread(sensor_main,(motion,0))
 
 
 #MAIN LOOP
 while True:
-    #Web Var Stuff
+    #Sets the displayed indoor/outdoor temp to the ones the sensors read
     curTemp = readIntTemperature()
     outTemp = readExtTemperature()
 
@@ -285,6 +289,8 @@ while True:
         request = request.split()[1]
     except IndexError:
         pass
+    #searches for specific requests from the html input
+    #changes python vars accordingly
     if request == '/mintempup?':
         minTemp+=1
     if request == '/mintempdown?':
@@ -296,9 +302,11 @@ while True:
     if request == '/lightmodeauto?':
         curLightMode='auto'
     if request == '/lightmodeon?':
-        curLightMode='auto'
+        curLightMode='on'
     elif request == '/lightmodeoff?':
         curLightMode='off'
+    curTemp = readIntTemperature()
+    outTemp = readExtTemperature()
     response = webpage()
     conn.send(response)
-conn.close()
+    conn.close()
