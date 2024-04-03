@@ -1,12 +1,10 @@
 import network
 import socket
 from time import sleep
-import machine
 from machine import I2C, Pin, ADC, PWM
 from math import log, trunc
 import _thread
-import json
-import gc
+
 
 
 #VARIABLES
