@@ -205,28 +205,19 @@ def lightOn():
         return True
 
 #Web functions
-def get_html(html_name,css_name,js_name):
+def get_html(html_name,css_name):
    with open(html_name, 'r') as file:
       html = file.read().format(Current_temp=curTemp,MIN=minTemp,MAX=maxTemp,outdoor_temp=outTemp,light_mode=curLightMode)
       file.close()
    with open(css_name, 'r') as file1:
       css = file1.read()
       file1.close()
-   with open(js_name, 'r') as file2:
-      js = file2.read()
-      file2.close()
-   input_file = str(html)+"<style>" +str(css)+ "</style>"+"<script>" +str(js)+ "</script>"
+   input_file = str(html)+"<style>" +str(css)+ "</style>"
    return input_file
 
 def webpage():
-    html = get_html('index.html','styles.css','scripts.js')
+    html = get_html('index.html','styles.css')
     return str(html)
-
-def get_status():
-    status = {
-        "curTemp":curTemp,
-    }
-    return json.dumps(status)
 
 
 motion = [False,readValueFrom(0)] #motion initial declaration
@@ -252,7 +243,7 @@ def sensor_main(motion,lightCount): #sensor main function
                 setRGBColor(rgbCurrent) # calls setRGB function to turn on LED
                 lightState = True
                 lightCount = 0
-            elif lightCount>20:
+            elif lightCount>4:
                 setRGBColor(rgbOff) # calls setRGB function to turn off LED\
                 lightState = False
                 lightCount = 0
@@ -274,7 +265,7 @@ def sensor_main(motion,lightCount): #sensor main function
             coolON.off()
 
 
-        sleep (0.1)
+        sleep (0.5)
 
 _thread.start_new_thread(sensor_main,(motion,0))
 
@@ -283,15 +274,13 @@ _thread.start_new_thread(sensor_main,(motion,0))
 while True:
     #Web Var Stuff
     curTemp = readIntTemperature()
+    outTemp = readExtTemperature()
 
     #Webpage stuff
     conn, addr = s.accept()
     print('Got a connection from %s' % str(addr))
     request = conn.recv(1024)
     request = str(request)
-    if request.find("/status")==6:
-        response = get_status()
-        conn.send(response)
     try:
         request = request.split()[1]
     except IndexError:
@@ -304,8 +293,12 @@ while True:
         maxTemp+=1
     if request == '/maxtempdown?':
         maxTemp-=1
-    elif request == '/lightoff?':
-        onboard.off()
+    if request == '/lightmodeauto?':
+        curLightMode='auto'
+    if request == '/lightmodeon?':
+        curLightMode='auto'
+    elif request == '/lightmodeoff?':
+        curLightMode='off'
     response = webpage()
     conn.send(response)
 conn.close()
