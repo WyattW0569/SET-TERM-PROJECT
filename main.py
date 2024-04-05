@@ -47,8 +47,8 @@ rgbCurrent = rgbOn
 
 #WEB IMPL
 onboard = Pin("LED", Pin.OUT, value=0)
-minTemp = 24
-maxTemp = 28
+minTemp = 20
+maxTemp = 26
 curTemp = 0
 outTemp = 0
 curLightMode = "auto"
